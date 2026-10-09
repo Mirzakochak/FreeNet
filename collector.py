@@ -3,22 +3,21 @@ import base64
 import random
 import re
 
+# لیست منابع جدید با آپدیت‌های ساعتی و کیفیت بالاتر
 sources = [
-    "https://raw.githubusercontent.com/mahdibland/ShadowsocksAggregator/master/Eternity",
-    "https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/mix",
-    "https://raw.githubusercontent.com/barry-far/V2ray-Configs/main/Sub1.txt",
-    "https://raw.githubusercontent.com/V2RAYCONFIGSPOOL/V2RAY_SUB/main/v2ray_sub.txt",
-    "https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray",
-    "https://raw.githubusercontent.com/ts-sf/fly/main/v2",
-    "https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2"
+    "https://raw.githubusercontent.com/ALIILAPRO/v2rayNG-Config/main/sub.txt",
+    "https://raw.githubusercontent.com/pawdroid/Free-servers/main/sub",
+    "https://raw.githubusercontent.com/yebekhe/V2Hub/main/Split/Normal/vless",
+    "https://raw.githubusercontent.com/yebekhe/V2Hub/main/Split/Normal/vmess",
+    "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/protocols/vless",
+    "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/protocols/vmess",
+    "https://raw.githubusercontent.com/w17star/V2ray-Configs/main/Sub3.txt"
 ]
 
 configs = set()
 
 def decode_base64(text):
-    # حذف تمام فاصله‌ها و اینترهای مخرب از رشته
     text = re.sub(r'\s+', '', text)
-    # اضافه کردن پدینگ مساوی (=) برای جلوگیری از ارور دیکود
     missing_padding = len(text) % 4
     if missing_padding:
         text += '=' * (4 - missing_padding)
@@ -27,7 +26,7 @@ def decode_base64(text):
     except:
         return ""
 
-print("شروع جمع‌آوری کانفیگ‌ها...")
+print("شروع جمع‌آوری کانفیگ‌ها از منابع جدید...")
 
 for url in sources:
     try:
@@ -35,7 +34,6 @@ for url in sources:
         if response.status_code == 200:
             raw_text = response.text.strip()
             
-            # تشخیص هوشمندانه: اگر متن ساده است یا Base64
             if "vless://" in raw_text or "vmess://" in raw_text:
                 lines = raw_text.splitlines()
             else:
@@ -48,18 +46,14 @@ for url in sources:
                 if line.startswith("vless://") or line.startswith("vmess://"):
                     configs.add(line)
                     count += 1
-            print(f"منبع {url.split('/')[-2]} -> پیدا شد: {count}")
+            print(f"منبع {url.split('/')[-1]} -> پیدا شد: {count}")
     except Exception as e:
-        print(f"خطا در منبع {url}: {e}")
+        print(f"خطا در منبع {url}")
 
-# تبدیل مجموعه به لیست
 configs_list = list(configs)
 print(f"\nتعداد کل کانفیگ‌های بدون تکرار: {len(configs_list)}")
 
-# به هم ریختن لیست برای میکس شدن منابع
 random.shuffle(configs_list)
-
-# جدا کردن دقیق 200 کانفیگ
 final_configs = configs_list[:200]
 
 if final_configs:
